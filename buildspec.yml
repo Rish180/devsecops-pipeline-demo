@@ -1,0 +1,23 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.10
+    commands:
+      - echo Installing security tools
+      - pip install semgrep
+      - curl -sSL https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks-linux-amd64 -o gitleaks
+      - chmod +x gitleaks
+
+  build:
+    commands:
+      - echo Running SAST scan
+      - semgrep scan --config auto
+
+      - echo Running secret scan
+      - ./gitleaks detect --source .
+
+artifacts:
+  files:
+    - '**/*'
